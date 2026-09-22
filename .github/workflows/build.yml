@@ -15,9 +15,9 @@ jobs:
         with:
           gradle-version: 8.9
       - name: Build debug APK
-        working-directory: Amir-Salam-with-support/Amir-Salam-Ready
+        working-directory:AmirSalam-Final-Offline
         run: gradle assembleDebug --stacktrace
       - uses: actions/upload-artifact@v4
         with:
           name: AmirSalam-debug-apk
-          path: Amir-Salam-with-support/Amir-Salam-Ready/app/build/outputs/apk/debug/app-debug.apk
+          path: AmirSalam-Final-Offline/app/build/outputs/apk/debug/app-debug.apk
