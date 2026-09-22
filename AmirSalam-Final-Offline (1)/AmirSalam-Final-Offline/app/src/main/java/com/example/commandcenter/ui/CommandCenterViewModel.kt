@@ -26,6 +26,10 @@ class AmirSalamViewModel(
     private val query = MutableStateFlow("")
     val search: StateFlow<String> = query
 
+    private val tabState = MutableStateFlow(0)
+    val currentTab: StateFlow<Int> = tabState
+    fun setTab(value: Int) { tabState.value = value }
+
     val rules: StateFlow<List<Rule>> = ruleRepo.rules.stateIn(
         viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList()
     )
@@ -44,10 +48,6 @@ class AmirSalamViewModel(
             if (q.isBlank()) renamed
             else renamed.filter { (name, _) -> name.contains(q, ignoreCase = true) }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    val filteredRules: StateFlow<List<Rule>> = combine(rules, query) { r, q ->
-        r // rule management list is unfiltered; search box only filters the home grid
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
         viewModelScope.launch { ruleRepo.initializeIfEmpty() }

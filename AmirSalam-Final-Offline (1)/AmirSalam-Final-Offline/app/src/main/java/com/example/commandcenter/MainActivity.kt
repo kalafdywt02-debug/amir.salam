@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.OnBackPressedCallback
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
@@ -18,13 +19,26 @@ import com.example.commandcenter.ui.AmirSalamViewModel
 import com.example.commandcenter.ui.MainScreen
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var vm: AmirSalamViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val vm = AmirSalamViewModel(
+        vm = AmirSalamViewModel(
             ruleRepo = RuleRepository(applicationContext),
             prefsRepo = LauncherPrefsRepository(applicationContext),
             appRepo = AppRepository(applicationContext)
         )
+
+        // On a launcher, Back should never close the app (there is nothing
+        // to return to); it should just take the user to the home tab
+        // if they were somewhere else, like Settings.
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (vm.currentTab.value != 0) vm.setTab(0)
+            }
+        })
+
         setContent {
             AmirSalamTheme {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -48,11 +62,5 @@ class MainActivity : ComponentActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "این برنامه باز نشد", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    // Pressing the system Home button while already on the home screen
-    // should just stay here, not close the launcher like a normal app.
-    override fun onBackPressed() {
-        // no-op on the home tab; NavigationBar handles in-app navigation
     }
 }

@@ -34,7 +34,7 @@ import com.example.commandcenter.data.Rule
 
 @Composable
 fun MainScreen(viewModel: AmirSalamViewModel, launchApp: (InstalledAppInfo) -> Unit) {
-    var tab by remember { mutableIntStateOf(0) }
+    val tab by viewModel.currentTab.collectAsState()
     val context = LocalContext.current
     val apps by viewModel.displayedApps.collectAsState()
     val rules by viewModel.rules.collectAsState()
@@ -69,8 +69,8 @@ fun MainScreen(viewModel: AmirSalamViewModel, launchApp: (InstalledAppInfo) -> U
                 }
             }
             NavigationBar(containerColor = Color(0xFF11141B)) {
-                NavigationBarItem(tab == 0, { tab = 0 }, icon = { Icon(Icons.Default.Home, null) }, label = { Text("خانه") })
-                NavigationBarItem(tab == 1, { tab = 1 }, icon = { Icon(Icons.Default.Settings, null) }, label = { Text("تنظیمات") })
+                NavigationBarItem(tab == 0, { viewModel.setTab(0) }, icon = { Icon(Icons.Default.Home, null) }, label = { Text("خانه") })
+                NavigationBarItem(tab == 1, { viewModel.setTab(1) }, icon = { Icon(Icons.Default.Settings, null) }, label = { Text("تنظیمات") })
             }
         }
     }
