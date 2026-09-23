@@ -1,24 +1,37 @@
 name: Build APK
+
 on:
   push:
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: AmirSalam-Final-Offline
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: List repo root (debug)
+        run: |
+          echo "Repo root contents:"
+          ls -la
+          echo "---"
+          echo "Looking for AmirSalam-Final-Offline:"
+          ls -la AmirSalam-Final-Offline || echo "!!! AmirSalam-Final-Offline NOT FOUND at repo root !!!"
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.9
+
       - name: Build debug APK
+        working-directory: AmirSalam-Final-Offline
         run: gradle assembleDebug --stacktrace
+
       - uses: actions/upload-artifact@v4
         with:
           name: AmirSalam-debug-apk
